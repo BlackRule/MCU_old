@@ -826,8 +826,8 @@ extern "C" {
   */
 #if defined(STM32F101x6) || defined(STM32F102x6) || defined(STM32F102xB) || defined(STM32F103x6)
 #define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0U :\
-								   ((__GPIOx__) == (GPIOB))? 1U :\
-								   ((__GPIOx__) == (GPIOC))? 2U :3U)
+                                   ((__GPIOx__) == (GPIOB))? 1U :\
+                                   ((__GPIOx__) == (GPIOC))? 2U :3U)
 #elif defined(STM32F100xB) || defined(STM32F101xB) || defined(STM32F103xB) || defined(STM32F105xC) || defined(STM32F107xC)
 #define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0U :\
                                    ((__GPIOx__) == (GPIOB))? 1U :\
@@ -835,11 +835,11 @@ extern "C" {
                                    ((__GPIOx__) == (GPIOD))? 3U :4U)
 #elif defined(STM32F100xE) || defined(STM32F101xE) || defined(STM32F101xG) || defined(STM32F103xE) || defined(STM32F103xG)
 #define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0U :\
-								   ((__GPIOx__) == (GPIOB))? 1U :\
-								   ((__GPIOx__) == (GPIOC))? 2U :\
-								   ((__GPIOx__) == (GPIOD))? 3U :\
-								   ((__GPIOx__) == (GPIOE))? 4U :\
-								   ((__GPIOx__) == (GPIOF))? 5U :6U)
+                                   ((__GPIOx__) == (GPIOB))? 1U :\
+                                   ((__GPIOx__) == (GPIOC))? 2U :\
+                                   ((__GPIOx__) == (GPIOD))? 3U :\
+                                   ((__GPIOx__) == (GPIOE))? 4U :\
+                                   ((__GPIOx__) == (GPIOF))? 5U :6U)
 #endif
 
 #define AFIO_REMAP_ENABLE(REMAP_PIN)       do{ uint32_t tmpreg = AFIO->MAPR; \
@@ -882,9 +882,7 @@ extern "C" {
   * @{
   */
 void HAL_GPIOEx_ConfigEventout(uint32_t GPIO_PortSource, uint32_t GPIO_PinSource);
-
 void HAL_GPIOEx_EnableEventout(void);
-
 void HAL_GPIOEx_DisableEventout(void);
 
 /**

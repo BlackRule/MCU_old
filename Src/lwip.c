@@ -46,12 +46,11 @@
   *
   ******************************************************************************
   */
-
+  
 /* Includes ------------------------------------------------------------------*/
 #include "lwip.h"
 #include "lwip/init.h"
 #include "lwip/netif.h"
-
 #if defined ( __CC_ARM )  /* MDK ARM Compiler */
 #include "lwip/sio.h"
 #endif /* MDK ARM Compiler */
@@ -61,7 +60,7 @@
 /* USER CODE END 0 */
 /* Private function prototypes -----------------------------------------------*/
 /* ETH Variables initialization ----------------------------------------------*/
-void _Error_Handler(char *file, int line);
+void _Error_Handler(char * file, int line);
 
 /* USER CODE BEGIN 1 */
 
@@ -83,42 +82,46 @@ uint8_t GATEWAY_ADDRESS[4];
 /**
   * LwIP initialization function
   */
-void MX_LWIP_Init(void) {
-	/* IP addresses initialization */
-	IP_ADDRESS[0] = 10;
-	IP_ADDRESS[1] = 1;
-	IP_ADDRESS[2] = 1;
-	IP_ADDRESS[3] = 2;
-	NETMASK_ADDRESS[0] = 255;
-	NETMASK_ADDRESS[1] = 255;
-	NETMASK_ADDRESS[2] = 255;
-	NETMASK_ADDRESS[3] = 0;
-	GATEWAY_ADDRESS[0] = 10;
-	GATEWAY_ADDRESS[1] = 1;
-	GATEWAY_ADDRESS[2] = 1;
-	GATEWAY_ADDRESS[3] = 1;
+void MX_LWIP_Init(void)
+{
+  /* IP addresses initialization */
+  IP_ADDRESS[0] = 10;
+  IP_ADDRESS[1] = 1;
+  IP_ADDRESS[2] = 1;
+  IP_ADDRESS[3] = 2;
+  NETMASK_ADDRESS[0] = 255;
+  NETMASK_ADDRESS[1] = 255;
+  NETMASK_ADDRESS[2] = 255;
+  NETMASK_ADDRESS[3] = 0;
+  GATEWAY_ADDRESS[0] = 10;
+  GATEWAY_ADDRESS[1] = 1;
+  GATEWAY_ADDRESS[2] = 1;
+  GATEWAY_ADDRESS[3] = 1;
+  
+  /* Initilialize the LwIP stack with RTOS */
+  tcpip_init( NULL, NULL );
 
-	/* Initilialize the LwIP stack with RTOS */
-	tcpip_init(NULL, NULL);
+  /* IP addresses initialization without DHCP (IPv4) */
+  IP4_ADDR(&ipaddr, IP_ADDRESS[0], IP_ADDRESS[1], IP_ADDRESS[2], IP_ADDRESS[3]);
+  IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1] , NETMASK_ADDRESS[2], NETMASK_ADDRESS[3]);
+  IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2], GATEWAY_ADDRESS[3]);
 
-	/* IP addresses initialization without DHCP (IPv4) */
-	IP4_ADDR(&ipaddr, IP_ADDRESS[0], IP_ADDRESS[1], IP_ADDRESS[2], IP_ADDRESS[3]);
-	IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1], NETMASK_ADDRESS[2], NETMASK_ADDRESS[3]);
-	IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2], GATEWAY_ADDRESS[3]);
+  /* add the network interface (IPv4/IPv6) with RTOS */
+  netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &tcpip_input);
 
-	/* add the network interface (IPv4/IPv6) with RTOS */
-	netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &tcpip_input);
+  /* Registers the default network interface */
+  netif_set_default(&gnetif);
 
-	/* Registers the default network interface */
-	netif_set_default(&gnetif);
-
-	if (netif_is_link_up(&gnetif)) {
-		/* When the netif is fully configured this function must be called */
-		netif_set_up(&gnetif);
-	} else {
-		/* When the netif link is down this function must be called */
-		netif_set_down(&gnetif);
-	}
+  if (netif_is_link_up(&gnetif))
+  {
+    /* When the netif is fully configured this function must be called */
+    netif_set_up(&gnetif);
+  }
+  else
+  {
+    /* When the netif link is down this function must be called */
+    netif_set_down(&gnetif);
+  }
 
 /* USER CODE BEGIN 3 */
 

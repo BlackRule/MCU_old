@@ -51,7 +51,7 @@
 #ifndef __mx_lwip_H
 #define __mx_lwip_H
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -66,9 +66,7 @@ extern "C" {
 
 /* Includes for RTOS ---------------------------------------------------------*/
 #if WITH_RTOS
-
 #include "lwip/tcpip.h"
-
 #endif /* WITH_RTOS */
 
 /* USER CODE BEGIN 0 */
@@ -78,7 +76,7 @@ extern "C" {
 /* Global Variables ----------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
 
-/* LWIP init function */
+/* LWIP init function */	
 void MX_LWIP_Init(void);
 
 #if !WITH_RTOS

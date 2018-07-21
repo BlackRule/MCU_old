@@ -44,11 +44,9 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx.h"
-
 #if defined(USE_HAL_LEGACY)
 #include "Legacy/stm32_hal_legacy.h"
 #endif
-
 #include <stdio.h>
 
 /* Exported types ------------------------------------------------------------*/
@@ -56,19 +54,21 @@ extern "C" {
 /**
   * @brief  HAL Status structures definition
   */
-typedef enum {
-	HAL_OK = 0x00U,
-	HAL_ERROR = 0x01U,
-	HAL_BUSY = 0x02U,
-	HAL_TIMEOUT = 0x03U
+typedef enum
+{
+  HAL_OK       = 0x00U,
+  HAL_ERROR    = 0x01U,
+  HAL_BUSY     = 0x02U,
+  HAL_TIMEOUT  = 0x03U
 } HAL_StatusTypeDef;
 
 /**
   * @brief  HAL Lock structures definition
   */
-typedef enum {
-	HAL_UNLOCKED = 0x00U,
-	HAL_LOCKED = 0x01U
+typedef enum
+{
+  HAL_UNLOCKED = 0x00U,
+  HAL_LOCKED   = 0x01U
 } HAL_LockTypeDef;
 
 /* Exported macro ------------------------------------------------------------*/

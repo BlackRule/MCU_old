@@ -38,7 +38,7 @@
 #define __STM32F1xx_HAL_RCC_H
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -61,34 +61,36 @@ extern "C" {
 /** 
   * @brief  RCC PLL configuration structure definition  
   */
-typedef struct {
-	uint32_t PLLState;      /*!< PLLState: The new state of the PLL.
+typedef struct
+{
+  uint32_t PLLState;      /*!< PLLState: The new state of the PLL.
                               This parameter can be a value of @ref RCC_PLL_Config */
 
-	uint32_t PLLSource;     /*!< PLLSource: PLL entry clock source.
-                              This parameter must be a value of @ref RCC_PLL_Clock_Source */
+  uint32_t PLLSource;     /*!< PLLSource: PLL entry clock source.
+                              This parameter must be a value of @ref RCC_PLL_Clock_Source */          
 
-	uint32_t PLLMUL;        /*!< PLLMUL: Multiplication factor for PLL VCO input clock
+  uint32_t PLLMUL;        /*!< PLLMUL: Multiplication factor for PLL VCO input clock
                               This parameter must be a value of @ref RCCEx_PLL_Multiplication_Factor */
 } RCC_PLLInitTypeDef;
-
+   
 /**
   * @brief  RCC System, AHB and APB busses clock configuration structure definition  
   */
-typedef struct {
-	uint32_t ClockType;             /*!< The clock to be configured.
+typedef struct
+{
+  uint32_t ClockType;             /*!< The clock to be configured.
                                        This parameter can be a value of @ref RCC_System_Clock_Type */
 
-	uint32_t SYSCLKSource;          /*!< The clock source (SYSCLKS) used as system clock.
+  uint32_t SYSCLKSource;          /*!< The clock source (SYSCLKS) used as system clock.
                                        This parameter can be a value of @ref RCC_System_Clock_Source */
 
-	uint32_t AHBCLKDivider;         /*!< The AHB clock (HCLK) divider. This clock is derived from the system clock (SYSCLK).
+  uint32_t AHBCLKDivider;         /*!< The AHB clock (HCLK) divider. This clock is derived from the system clock (SYSCLK).
                                        This parameter can be a value of @ref RCC_AHB_Clock_Source */
 
-	uint32_t APB1CLKDivider;        /*!< The APB1 clock (PCLK1) divider. This clock is derived from the AHB clock (HCLK).
+  uint32_t APB1CLKDivider;        /*!< The APB1 clock (PCLK1) divider. This clock is derived from the AHB clock (HCLK).
                                        This parameter can be a value of @ref RCC_APB1_APB2_Clock_Source */
 
-	uint32_t APB2CLKDivider;        /*!< The APB2 clock (PCLK2) divider. This clock is derived from the AHB clock (HCLK).
+  uint32_t APB2CLKDivider;        /*!< The APB2 clock (PCLK2) divider. This clock is derived from the AHB clock (HCLK).
                                        This parameter can be a value of @ref RCC_APB1_APB2_Clock_Source */
 } RCC_ClkInitTypeDef;
 
@@ -228,7 +230,7 @@ typedef struct {
 /**
   * @}
   */
-
+  
 /** @defgroup RCC_APB1_APB2_Clock_Source APB1 APB2 Clock Source
   * @{
   */
@@ -284,8 +286,8 @@ typedef struct {
 #define RCC_IT_CSS                       ((uint8_t)RCC_CIR_CSSF)      /*!< Clock Security System Interrupt flag */
 /**
   * @}
-  */
-
+  */ 
+  
 /** @defgroup RCC_Flag Flags
   *        Elements values convention: XXXYYYYYb
   *           - YYYYY  : Flag position in the register
@@ -591,7 +593,7 @@ typedef struct {
 /**
   * @}
   */
-
+  
 /** @defgroup RCC_APB2_Peripheral_Clock_Enable_Disable_Status APB2 Peripheral Clock Enable Disable Status
   * @brief  Get the enable or disable status of the APB2 peripheral clock.
   * @note   After reset, the peripheral clock (used for registers read/write access)
@@ -627,7 +629,7 @@ typedef struct {
   * @brief  Force or release APB1 peripheral reset.
   * @{   
   */
-#define __HAL_RCC_APB1_FORCE_RESET()       (RCC->APB2RSTR = 0xFFFFFFFFU)
+#define __HAL_RCC_APB1_FORCE_RESET()       (RCC->APB2RSTR = 0xFFFFFFFFU)  
 #define __HAL_RCC_TIM2_FORCE_RESET()       (RCC->APB1RSTR |= (RCC_APB1RSTR_TIM2RST))
 #define __HAL_RCC_TIM3_FORCE_RESET()       (RCC->APB1RSTR |= (RCC_APB1RSTR_TIM3RST))
 #define __HAL_RCC_WWDG_FORCE_RESET()       (RCC->APB1RSTR |= (RCC_APB1RSTR_WWDGRST))
@@ -637,7 +639,7 @@ typedef struct {
 #define __HAL_RCC_BKP_FORCE_RESET()        (RCC->APB1RSTR |= (RCC_APB1RSTR_BKPRST))
 #define __HAL_RCC_PWR_FORCE_RESET()        (RCC->APB1RSTR |= (RCC_APB1RSTR_PWRRST))
 
-#define __HAL_RCC_APB1_RELEASE_RESET()      (RCC->APB1RSTR = 0x00)
+#define __HAL_RCC_APB1_RELEASE_RESET()      (RCC->APB1RSTR = 0x00)  
 #define __HAL_RCC_TIM2_RELEASE_RESET()       (RCC->APB1RSTR &= ~(RCC_APB1RSTR_TIM2RST))
 #define __HAL_RCC_TIM3_RELEASE_RESET()       (RCC->APB1RSTR &= ~(RCC_APB1RSTR_TIM3RST))
 #define __HAL_RCC_WWDG_RELEASE_RESET()       (RCC->APB1RSTR &= ~(RCC_APB1RSTR_WWDGRST))
@@ -655,7 +657,7 @@ typedef struct {
   * @brief  Force or release APB2 peripheral reset.
   * @{   
   */
-#define __HAL_RCC_APB2_FORCE_RESET()       (RCC->APB2RSTR = 0xFFFFFFFFU)
+#define __HAL_RCC_APB2_FORCE_RESET()       (RCC->APB2RSTR = 0xFFFFFFFFU)  
 #define __HAL_RCC_AFIO_FORCE_RESET()       (RCC->APB2RSTR |= (RCC_APB2RSTR_AFIORST))
 #define __HAL_RCC_GPIOA_FORCE_RESET()      (RCC->APB2RSTR |= (RCC_APB2RSTR_IOPARST))
 #define __HAL_RCC_GPIOB_FORCE_RESET()      (RCC->APB2RSTR |= (RCC_APB2RSTR_IOPBRST))
@@ -667,7 +669,7 @@ typedef struct {
 #define __HAL_RCC_SPI1_FORCE_RESET()       (RCC->APB2RSTR |= (RCC_APB2RSTR_SPI1RST))
 #define __HAL_RCC_USART1_FORCE_RESET()     (RCC->APB2RSTR |= (RCC_APB2RSTR_USART1RST))
 
-#define __HAL_RCC_APB2_RELEASE_RESET()      (RCC->APB2RSTR = 0x00)
+#define __HAL_RCC_APB2_RELEASE_RESET()      (RCC->APB2RSTR = 0x00)  
 #define __HAL_RCC_AFIO_RELEASE_RESET()       (RCC->APB2RSTR &= ~(RCC_APB2RSTR_AFIORST))
 #define __HAL_RCC_GPIOA_RELEASE_RESET()      (RCC->APB2RSTR &= ~(RCC_APB2RSTR_IOPARST))
 #define __HAL_RCC_GPIOB_RELEASE_RESET()      (RCC->APB2RSTR &= ~(RCC_APB2RSTR_IOPBRST))
@@ -706,7 +708,7 @@ typedef struct {
   * @param  _HSICALIBRATIONVALUE_ specifies the calibration trimming value.
   *         (default is RCC_HSICALIBRATION_DEFAULT).
   *         This parameter must be a number between 0 and 0x1F.
-  */
+  */  
 #define __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(_HSICALIBRATIONVALUE_) \
           (MODIFY_REG(RCC->CR, RCC_CR_HSITRIM, (uint32_t)(_HSICALIBRATIONVALUE_) << RCC_CR_HSITRIM_Pos))
 
@@ -929,7 +931,7 @@ typedef struct {
 
 /** @defgroup RCCEx_MCOx_Clock_Config RCC Extended MCOx Clock Config
   * @{   
-  */
+  */ 
 
 #if   defined(RCC_CFGR_MCO_3)
 /** @brief  Macro to configure the MCO clock.
@@ -971,9 +973,9 @@ typedef struct {
   * @}
   */
 
-/** @defgroup RCC_RTC_Clock_Configuration RCC RTC Clock Configuration
-* @{
-*/
+  /** @defgroup RCC_RTC_Clock_Configuration RCC RTC Clock Configuration
+  * @{   
+  */
 
 /** @brief Macro to configure the RTC clock (RTCCLK).
   * @note   As the RTC clock configuration bits are in the Backup domain and write
@@ -998,7 +1000,7 @@ typedef struct {
   *         RTC clock source).
   */
 #define __HAL_RCC_RTC_CONFIG(__RTC_CLKSOURCE__) MODIFY_REG(RCC->BDCR, RCC_BDCR_RTCSEL, (__RTC_CLKSOURCE__))
-
+                                                   
 /** @brief Macro to get the RTC clock source.
   * @retval The clock source can be one of the following values:
   *            @arg @ref RCC_RTCCLKSOURCE_NO_CLK No clock selected as RTC clock
@@ -1167,10 +1169,8 @@ typedef struct {
 
 /* Initialization and de-initialization functions  ******************************/
 HAL_StatusTypeDef HAL_RCC_DeInit(void);
-
-HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef *RCC_OscInitStruct);
-
-HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef *RCC_ClkInitStruct, uint32_t FLatency);
+HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct);
+HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t FLatency);
 
 /**
   * @}
@@ -1181,29 +1181,21 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef *RCC_ClkInitStruct, uin
   */
 
 /* Peripheral Control functions  ************************************************/
-void HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_MCODiv);
-
-void HAL_RCC_EnableCSS(void);
-
-void HAL_RCC_DisableCSS(void);
-
-uint32_t HAL_RCC_GetSysClockFreq(void);
-
-uint32_t HAL_RCC_GetHCLKFreq(void);
-
-uint32_t HAL_RCC_GetPCLK1Freq(void);
-
-uint32_t HAL_RCC_GetPCLK2Freq(void);
-
-void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef *RCC_OscInitStruct);
-
-void HAL_RCC_GetClockConfig(RCC_ClkInitTypeDef *RCC_ClkInitStruct, uint32_t *pFLatency);
+void              HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_MCODiv);
+void              HAL_RCC_EnableCSS(void);
+void              HAL_RCC_DisableCSS(void);
+uint32_t          HAL_RCC_GetSysClockFreq(void);
+uint32_t          HAL_RCC_GetHCLKFreq(void);
+uint32_t          HAL_RCC_GetPCLK1Freq(void);
+uint32_t          HAL_RCC_GetPCLK2Freq(void);
+void              HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct);
+void              HAL_RCC_GetClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t *pFLatency);
 
 /* CSS NMI IRQ handler */
-void HAL_RCC_NMI_IRQHandler(void);
+void              HAL_RCC_NMI_IRQHandler(void);
 
 /* User Callbacks in non blocking mode (IT mode) */
-void HAL_RCC_CSSCallback(void);
+void              HAL_RCC_CSSCallback(void);
 
 /**
   * @}
@@ -1219,8 +1211,8 @@ void HAL_RCC_CSSCallback(void);
 
 /** @defgroup RCC_Timeout RCC Timeout
   * @{
-  */
-
+  */ 
+  
 /* Disable Backup domain write protection state change timeout */
 #define RCC_DBP_TIMEOUT_VALUE          100U    /* 100 ms */
 /* LSE state change timeout */
@@ -1234,7 +1226,7 @@ void HAL_RCC_CSSCallback(void);
 /**
   * @}
   */
-
+  
 /** @defgroup RCC_Register_Offset Register offsets
   * @{
   */
@@ -1302,7 +1294,7 @@ void HAL_RCC_CSSCallback(void);
 /**
   * @}
   */
-
+  
 /* CR register byte 2 (Bits[23:16]) base address */
 #define RCC_CR_BYTE2_ADDRESS          ((uint32_t)(RCC_BASE + RCC_CR_OFFSET + 0x02U))
 
@@ -1373,7 +1365,7 @@ void HAL_RCC_CSSCallback(void);
                                ((__PCLK__) == RCC_HCLK_DIV4) || ((__PCLK__) == RCC_HCLK_DIV8) || \
                                ((__PCLK__) == RCC_HCLK_DIV16))
 #define IS_RCC_MCO(__MCO__)  ((__MCO__) == RCC_MCO)
-#define IS_RCC_MCODIV(__DIV__) (((__DIV__) == RCC_MCODIV_1))
+#define IS_RCC_MCODIV(__DIV__) (((__DIV__) == RCC_MCODIV_1)) 
 #define IS_RCC_RTCCLKSOURCE(__SOURCE__)  (((__SOURCE__) == RCC_RTCCLKSOURCE_NO_CLK) || \
                                           ((__SOURCE__) == RCC_RTCCLKSOURCE_LSE) || \
                                           ((__SOURCE__) == RCC_RTCCLKSOURCE_LSI) || \
@@ -1390,7 +1382,7 @@ void HAL_RCC_CSSCallback(void);
 /**
   * @}
   */
-
+  
 #ifdef __cplusplus
 }
 #endif

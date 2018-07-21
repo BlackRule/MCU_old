@@ -47,14 +47,14 @@
   *
   ******************************************************************************
   */
-
-/******************************************************************************
-* If LWIP_SOCKET option is enabled:
-*  - include this syscalls.c file
-******************************************************************************/
+  
+ /******************************************************************************
+ * If LWIP_SOCKET option is enabled:
+ *  - include this syscalls.c file
+ ******************************************************************************/
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* USER CODE BEGIN 0 */
@@ -86,7 +86,6 @@ extern "C" {
 #define MAX_STACK_SIZE 0x2000
 
 extern int __io_putchar(int ch) __attribute__((weak));
-
 extern int __io_getchar(void) __attribute__((weak));
 
 /* USER CODE BEGIN 2 */

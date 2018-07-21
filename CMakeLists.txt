@@ -33,7 +33,7 @@ PROJECT(LWIP_USART_ADC C ASM)
 set(CMAKE_CXX_STANDARD 11)
 
 #add_definitions(-DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1 )
-add_definitions(-D_TIMEVAL_DEFINED -D_SYS_TIME_H_ -D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32F107xC)
+add_definitions(-D_TIMEVAL_DEFINED -D_SYS_TIME_H_ -D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32F107xC )
 
 file(GLOB_RECURSE SOURCES "startup/*.*" "LWIP/*.*" "FREERTOS/*.*" "Middlewares/*.*" "Drivers/*.*" "Src/*.*" "Inc/*.*")
 

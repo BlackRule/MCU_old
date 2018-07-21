@@ -185,7 +185,7 @@ void SystemClock_Config(void) {
 	RCC_OscInitStruct.Prediv1Source = RCC_PREDIV1_SOURCE_PLL2;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
 	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL7;
 	RCC_OscInitStruct.PLL2.PLL2State = RCC_PLL2_ON;
 	RCC_OscInitStruct.PLL2.PLL2MUL = RCC_PLL2_MUL8;
 	RCC_OscInitStruct.PLL2.HSEPrediv2Value = RCC_HSE_PREDIV2_DIV5;
@@ -207,7 +207,7 @@ void SystemClock_Config(void) {
 	}
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV2;
+	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
