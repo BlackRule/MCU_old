@@ -59,13 +59,13 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
-USART_HandleTypeDef husart1;
+UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+osThreadId UARTTaskHandle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,12 +75,14 @@ static void MX_GPIO_Init(void);
 
 static void MX_ADC1_Init(void);
 
-static void MX_USART1_Init(void);
+static void MX_USART2_UART_Init(void);
 
 void StartDefaultTask(void const *argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+
+void StartUARTTask(void const *argument);
 
 /* USER CODE END PFP */
 
@@ -117,7 +119,7 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_ADC1_Init();
-	MX_USART1_Init();
+	MX_USART2_UART_Init();
 	/* USER CODE BEGIN 2 */
 
 	/* USER CODE END 2 */
@@ -141,6 +143,8 @@ int main(void) {
 
 	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
+	osThreadDef(UARTTask, StartUARTTask, osPriorityNormal, 0, 128);
+	UARTTaskHandle = osThreadCreate(osThread(UARTTask), NULL);
 	/* USER CODE END RTOS_THREADS */
 
 	/* USER CODE BEGIN RTOS_QUEUES */
@@ -257,19 +261,18 @@ static void MX_ADC1_Init(void) {
 
 }
 
-/* USART1 init function */
-static void MX_USART1_Init(void) {
+/* USART2 init function */
+static void MX_USART2_UART_Init(void) {
 
-	husart1.Instance = USART1;
-	husart1.Init.BaudRate = 115200;
-	husart1.Init.WordLength = USART_WORDLENGTH_8B;
-	husart1.Init.StopBits = USART_STOPBITS_1;
-	husart1.Init.Parity = USART_PARITY_NONE;
-	husart1.Init.Mode = USART_MODE_TX_RX;
-	husart1.Init.CLKPolarity = USART_POLARITY_LOW;
-	husart1.Init.CLKPhase = USART_PHASE_1EDGE;
-	husart1.Init.CLKLastBit = USART_LASTBIT_DISABLE;
-	if (HAL_USART_Init(&husart1) != HAL_OK) {
+	huart2.Instance = USART2;
+	huart2.Init.BaudRate = 115200;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.StopBits = UART_STOPBITS_1;
+	huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.Mode = UART_MODE_TX_RX;
+	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+	if (HAL_UART_Init(&huart2) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
@@ -290,6 +293,7 @@ static void MX_GPIO_Init(void) {
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOD_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
@@ -304,6 +308,13 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+void StartUARTTask(void const *argument) {
+	/* Infinite loop */
+	for (;;) {
+		HAL_UART_Transmit(&huart2, "Hello!\r\n", 9, 0xFFFF);
+		osDelay(1000);
+	}
+}
 
 /* USER CODE END 4 */
 
