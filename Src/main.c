@@ -47,6 +47,8 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <lwip/api.h>
+#include <string.h>
 #include "main.h"
 #include "stm32f1xx_hal.h"
 #include "cmsis_os.h"
@@ -62,6 +64,7 @@ ADC_HandleTypeDef hadc1;
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
+osThreadId netTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -78,6 +81,11 @@ static void MX_ADC1_Init(void);
 static void MX_USART2_UART_Init(void);
 
 void StartDefaultTask(void const *argument);
+
+void StartNetTask(void const *argument);
+
+#define printf(format) sprintf (pbuffer, format);HAL_UART_Transmit(&huart2, pbuffer, strlen(pbuffer), 0xFFFF)
+#define aprintf(format, ...) sprintf (pbuffer, format, __VA_ARGS__);HAL_UART_Transmit(&huart2, pbuffer, strlen(pbuffer), 0xFFFF)
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -138,7 +146,7 @@ int main(void) {
 
 	/* Create the thread(s) */
 	/* definition and creation of defaultTask */
-	osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+	osThreadDef(defaultTask, StartDefaultTask, osPriorityRealtime, 0, 512);
 	defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
 	/* USER CODE BEGIN RTOS_THREADS */
@@ -311,8 +319,8 @@ static void MX_GPIO_Init(void) {
 void StartUARTTask(void const *argument) {
 	/* Infinite loop */
 	for (;;) {
-		HAL_UART_Transmit(&huart2, "Hello!\r\n", 9, 0xFFFF);
-		osDelay(1000);
+		//HAL_UART_Transmit(&huart2, "Hello!\r\n", 8, 0xFFFF);
+//		osDelay(1000);
 	}
 }
 
@@ -324,14 +332,122 @@ void StartDefaultTask(void const *argument) {
 	MX_LWIP_Init();
 
 	/* USER CODE BEGIN 5 */
+
+	struct neconn *nc;
+	struct neconn *in_nc;
+	struct netbuf *nb;
+	volatile err_t res;
+	uint16_t len;
+	ip_addr_t local_ip;
+	ip_addr_t remote_ip;
+	ip4addr_aton("10.1.1.2", &local_ip);
+	ip4addr_aton("10.1.1.1", &remote_ip);
+	char *buffer = pvPortMalloc(2048);
+	char *pbuffer = pvPortMalloc(200);
+
+	/*//MCU as client WORKS:!!!
+	 nc = netconn_new(NETCONN_TCP);
+	if (nc == NULL) {
+		printf("new error\r\n");
+		while (1) osDelay(1);
+	}
+
+	res = netconn_bind(nc, &local_ip, 0);
+	if (res != 0) {
+		aprintf("bind error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+
+	res = netconn_connect(nc, &remote_ip, 3000);
+	if (res != 0) {
+		aprintf("connect error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+
+	sprintf(buffer, "\r\n");
+	res = netconn_write(nc, buffer, strlen(buffer), NETCONN_COPY);
+	if (res != 0) {
+		aprintf("write error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+
+	res = netconn_recv(nc, &nb);
+	if (res != 0) {
+		aprintf("recv error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+
+	len = netbuf_len(nb);
+	netbuf_copy(nb, buffer, len);
+	netbuf_delete(nb);
+	buffer[len] = 0;
+	aprintf("Received %d bytes:\r\n%s\r\n", len, buffer);
+	netconn_close(nc);
+	netconn_delete(nc);
+//sprintf writes into self
+	printf("Client sequence completed successful!\r\n");
+	 */
+//As server works!!))
+	nc = netconn_new(NETCONN_TCP);
+	if (nc == NULL) {
+		aprintf("new error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+
+
+	res = netconn_bind(nc, IP_ADDR_ANY, 3081);
+	if (res != 0) {
+		aprintf("bind error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+
+
+	res = netconn_listen(nc);
+	if (res != 0) {
+		aprintf("listen error: %d\r\n", res);
+		while (1) osDelay(1);
+	}
+	//Infinite loop
+	for (;;) {
+		res = netconn_accept(nc, &in_nc);
+		if (res != 0) {
+			aprintf("listen error: %d\r\n", res);
+		} else {
+			osThreadDef(netTask, StartNetTask, osPriorityNormal, 0, 256);
+			netTaskHandle = osThreadCreate(osThread(netTask), (void *) in_nc);
+		}
+//		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+//		osDelay(300);
+//		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+//		osDelay(300);
+
+	}
+}
+	/* USER CODE END 5 */
+
+
+/* StartNetTask function */
+void StartNetTask(void const *argument) {
+	struct netconn *nc = (struct netconn *) argument;
+	struct netbuf *nb;
+	char *buffer = pvPortMalloc(2048);
+	char *pbuffer = pvPortMalloc(200);
+	uint16_t len;
+	printf("Incoming connection\r\n");
+
+	sprintf(buffer, "Hello from STM32F746BGT6!\r\n");
+	netconn_write(nc, buffer, strlen(buffer), NETCONN_COPY);
+
 	/* Infinite loop */
 	for (;;) {
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-		osDelay(300);
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-		osDelay(300);
+		netconn_recv(nc, &nb);
+		len = netbuf_len(nb);
+		netbuf_copy(nb, buffer, len);
+		netbuf_delete(nb);
+		buffer[len] = 0;
+		aprintf("%s", buffer);
 	}
-	/* USER CODE END 5 */
+	/* USER CODE END StartNetTask */
 }
 
 /**
@@ -356,8 +472,7 @@ void _Error_Handler(char *file, int line) {
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
+void assert_failed(uint8_t* file, uint32_t line) {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
 	 tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
