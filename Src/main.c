@@ -47,28 +47,29 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include <lwip/api.h>
-#include <string.h>
 #include "main.h"
 #include "stm32f1xx_hal.h"
 #include "cmsis_os.h"
 #include "lwip.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "string.h"
+#include "lwip/api.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
+TIM_HandleTypeDef htim3;
+
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
-osThreadId netTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 osThreadId UARTTaskHandle;
+osThreadId netTaskHandle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,17 +81,17 @@ static void MX_ADC1_Init(void);
 
 static void MX_USART2_UART_Init(void);
 
+static void MX_TIM3_Init(void);
+
 void StartDefaultTask(void const *argument);
-
-void StartNetTask(void const *argument);
-
-#define printf(format) sprintf (pbuffer, format);HAL_UART_Transmit(&huart2, pbuffer, strlen(pbuffer), 0xFFFF)
-#define aprintf(format, ...) sprintf (pbuffer, format, __VA_ARGS__);HAL_UART_Transmit(&huart2, pbuffer, strlen(pbuffer), 0xFFFF)
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
 void StartUARTTask(void const *argument);
+
+#define printf(format) sprintf (pbuffer, format);HAL_UART_Transmit(&huart2, pbuffer, strlen(pbuffer), 0xFFFF)
+#define aprintf(format, ...) sprintf (pbuffer, format, __VA_ARGS__);HAL_UART_Transmit(&huart2, pbuffer, strlen(pbuffer), 0xFFFF)
 
 /* USER CODE END PFP */
 
@@ -128,6 +129,7 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_ADC1_Init();
 	MX_USART2_UART_Init();
+	MX_TIM3_Init();
 	/* USER CODE BEGIN 2 */
 
 	/* USER CODE END 2 */
@@ -146,7 +148,7 @@ int main(void) {
 
 	/* Create the thread(s) */
 	/* definition and creation of defaultTask */
-	osThreadDef(defaultTask, StartDefaultTask, osPriorityRealtime, 0, 512);
+	osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
 	defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
 	/* USER CODE BEGIN RTOS_THREADS */
@@ -197,7 +199,7 @@ void SystemClock_Config(void) {
 	RCC_OscInitStruct.Prediv1Source = RCC_PREDIV1_SOURCE_PLL2;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
 	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL7;
+	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
 	RCC_OscInitStruct.PLL2.PLL2State = RCC_PLL2_ON;
 	RCC_OscInitStruct.PLL2.PLL2MUL = RCC_PLL2_MUL8;
 	RCC_OscInitStruct.PLL2.HSEPrediv2Value = RCC_HSE_PREDIV2_DIV5;
@@ -219,7 +221,7 @@ void SystemClock_Config(void) {
 	}
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
@@ -251,7 +253,7 @@ static void MX_ADC1_Init(void) {
 	hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
 	hadc1.Init.ContinuousConvMode = DISABLE;
 	hadc1.Init.DiscontinuousConvMode = DISABLE;
-	hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+	hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T3_TRGO;
 	hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
 	hadc1.Init.NbrOfConversion = 1;
 	if (HAL_ADC_Init(&hadc1) != HAL_OK) {
@@ -264,6 +266,35 @@ static void MX_ADC1_Init(void) {
 	sConfig.Rank = ADC_REGULAR_RANK_1;
 	sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+}
+
+/* TIM3 init function */
+static void MX_TIM3_Init(void) {
+
+	TIM_ClockConfigTypeDef sClockSourceConfig;
+	TIM_MasterConfigTypeDef sMasterConfig;
+
+	htim3.Instance = TIM3;
+	htim3.Init.Prescaler = 1124;
+	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim3.Init.Period = 4;
+	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	if (HAL_TIM_Base_Init(&htim3) != HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+	if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+	if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
@@ -388,6 +419,8 @@ void StartDefaultTask(void const *argument) {
 	printf("Client sequence completed successful!\r\n");
 	 */
 //As server works!!))
+
+//	aprintf("%d", SystemCoreClock);
 	nc = netconn_new(NETCONN_TCP);
 	if (nc == NULL) {
 		aprintf("new error: %d\r\n", res);
@@ -447,8 +480,9 @@ void StartNetTask(void const *argument) {
 		buffer[len] = 0;
 		aprintf("%s", buffer);
 	}
-	/* USER CODE END StartNetTask */
 }
+/* USER CODE END StartNetTask */
+
 
 /**
   * @brief  This function is executed in case of error occurrence.
